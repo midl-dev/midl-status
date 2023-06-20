@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:14.1-alpine
+    container_name: midl-status-db
+    restart: always
+    environment:
+      POSTGRES_USER: 'midl'
+      POSTGRES_PASSWORD: 'midl'
+      POSTGRES_DB: 'midl'
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+  app:
+    build: ./
+    container_name: midl-status
+    environment:
+      APP_NAME: "MIDL status"
+      FLASK_DEBUG: "True"
+      FLASK_APP: app/main
+      FLASK_RUN_HOST: '0.0.0.0'
+      FLASK_RUN_PORT: '5000'
+      SECRET_KEY: '${SECRET_KEY:-dev}'
+      SQLALCHEMY_DATABASE_URI: 'postgresql://${POSTGRES_USER:-midl}:${POSTGRES_PASSWORD:-midl}@db:5432/${POSTGRES_DB:-midl}'
+    ports:
+      - '${PORT:-8080}:5000'
+    volumes:
+      - '${PWD}:/app'
+    depends_on:
+      - db
+    command: bash -c "flask db upgrade && python tools/data_seed.py && flask run"
+
+volumes:
+  db:

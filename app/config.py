@@ -18,6 +18,10 @@ class Config:
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
 
+    # Celery
+    CELERY_BROKER_URL = environ.get("CELERY_BROKER_URL")
+    CELERY_RESULT_BACKEND = environ.get("CELERY_RESULT_BACKEND")
+
     # Static Assets
     STATIC_FOLDER = "static"
     TEMPLATE_FOLDER = "templates"

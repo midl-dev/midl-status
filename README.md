@@ -1,5 +1,7 @@
 # midl-status
 
-A time-series app for status.midl.dev built with plotly dash
+## Workflow
 
-This project is built on top of boilderplate [flask-dash-app](https://github.com/tzelleke/flask-dash-app) with detailed reasoning which could be found in [this blog](https://hackersandslackers.com/plotly-dash-with-flask/)
+This is an flask app that we deploy to collect and mine useful data display our service status
+
+![workflow](./app.png)

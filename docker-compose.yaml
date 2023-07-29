@@ -1,36 +1,84 @@
-version: '3.9'
+version: '3'
 
 services:
   db:
-    image: postgres:14.1-alpine
+    image: postgres:15
     container_name: midl-status-db
-    restart: always
-    environment:
-      POSTGRES_USER: 'midl'
-      POSTGRES_PASSWORD: 'midl'
-      POSTGRES_DB: 'midl'
+    restart: "no"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
-      - db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-midl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-midl}
+      POSTGRES_DB: ${POSTGRES_DB:-midl_db}
+    networks:
+      - grafana_net
+  redis:
+    image: redis:7
+    container_name: midl-status-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - grafana_net
   app:
+    &status_app
     build: ./
     container_name: midl-status
+    restart: "no"
     environment:
-      APP_NAME: "MIDL status"
       FLASK_DEBUG: "True"
-      FLASK_APP: app/main
+      FLASK_APP: "app/main.py"
       FLASK_RUN_HOST: '0.0.0.0'
       FLASK_RUN_PORT: '5000'
       SECRET_KEY: '${SECRET_KEY:-dev}'
-      SQLALCHEMY_DATABASE_URI: 'postgresql://${POSTGRES_USER:-midl}:${POSTGRES_PASSWORD:-midl}@db:5432/${POSTGRES_DB:-midl}'
+      SQLALCHEMY_DATABASE_URI: 'postgresql://${POSTGRES_USER:-midl}:${POSTGRES_PASSWORD:-midl}@db:5432/${POSTGRES_DB:-midl_db}'
+      CELERY_BROKER_URL: "redis://redis:6379/0"
+      CELERY_RESULT_BACKEND: "redis://redis:6379/0"
     ports:
       - '${PORT:-8080}:5000'
     volumes:
       - '${PWD}:/app'
+    networks:
+      - grafana_net
     depends_on:
       - db
-    command: bash -c "flask db upgrade && python tools/data_seed.py && flask run"
+      - redis
+    command: bash -c "flask db upgrade && flask run"
+  app-celeryworker:
+    <<: *status_app
+    depends_on:
+      - app
+    container_name: midl-status-celeryworker
+    ports: []
+    command: bash -c "celery -A app.worker:celery worker --loglevel=INFO"
+  app-celerybeat:
+    <<: *status_app
+    depends_on:
+      - app
+    container_name: midl-status-celerybeat
+    ports: []
+    command: bash -c "celery -A app.worker:celery beat --loglevel=INFO"
+  grafana:
+    image: grafana/grafana:latest
+    restart: "no"
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - grafana_net
+    depends_on:
+      - app
 
 volumes:
-  db:
+  grafana_data:
+  postgres_data:
+  redis_data:
+
+networks:
+  grafana_net:

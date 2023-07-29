@@ -1,13 +1,12 @@
 import random
 from datetime import datetime, timedelta
 from os import environ
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.models import RequestCount
 
-rc_datetime = datetime(2023, 6, 27, 16, 30)
+rc_datetime = datetime(2023, 7, 27, 1, 30)
 entry_num = 500
 midl_na_cluster = "midl_na"
 midl_eu_cluster = "midl_eu"

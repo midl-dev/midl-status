@@ -1,9 +1,13 @@
-from celery import Celery
+import random
+from datetime import datetime
 
-# from celery.schedules import crontab
+import requests
+from celery import Celery
 from celery.utils.log import get_task_logger
+from loki_api_client.loki_connect import LokiConnect
 
 from app.main import create_app
+from app.models import ClusterStatus, RequestCount, db
 
 logger = get_task_logger(__name__)
 
@@ -33,11 +37,59 @@ celery = create_celery(flask_app)
 
 
 @celery.task
-def test_task():
-    logger.debug("hello world")
+def check_cluster_status():
+    for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
+        cluster_name, cluster_probe_url = cluster["name"], cluster["probe_url"]
+        cluster_status = ClusterStatus(cluster=cluster_name, time=datetime.now())
+
+        if flask_app.config["ENV"] == "development":
+            cluster_status.status = 1
+        else:
+            try:
+                probe_result = requests.get(cluster_probe_url, timeout=2.50)
+                cluster_status.status = (
+                    1 if 200 <= probe_result.status_code < 300 else 0
+                )
+            except requests.RequestException:
+                cluster_status.status = 0
+
+        db.session.add(cluster_status)
+        db.session.commit()
+
+
+@celery.task
+def fetch_cluster_request_counts(time_range):
+    for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
+        cluster_name, cluster_labels = cluster["name"], cluster["cluster_labels"]
+        cluster_requests = RequestCount(cluster=cluster_name, time=datetime.now())
+
+        if flask_app.config["ENV"] == "development":
+            cluster_requests.count = random.randint(5000, 15000)
+        else:
+            loki_url = flask_app.config["MIDL_LOKI_URL"]
+            loki_connect = LokiConnect(url=loki_url)
+            loki_query = f"sum(count_over_time({{{cluster_labels}}}[{time_range}]))"
+            try:
+                loki_resp = loki_connect.query(query=loki_query)
+                request_counts = (
+                    loki_resp["data"]["result"][0]["value"][-1]
+                    if len(loki_resp["data"]["result"]) > 0
+                    else 0
+                )
+                cluster_requests.count = request_counts
+            except Exception:
+                cluster_requests.count = 0
+
+        db.session.add(cluster_requests)
+        db.session.commit()
 
 
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    # Calls reverse_messages every 10 seconds.
-    sender.add_periodic_task(5.0, test_task, name="test task")
+    # Callscheck cluster status task every 10 seconds.
+    sender.add_periodic_task(
+        5.0, check_cluster_status, name="check cluster status task"
+    )
+    sender.add_periodic_task(
+        30.0, fetch_cluster_request_counts.s("30s"), name="check cluster status task"
+    )

@@ -11,7 +11,7 @@ class Config:
 
     # General Config
     APP_NAME = environ.get("APP_NAME")
-    # ENV = environ.get("FLASK_ENV")
+    ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("FLASK_DEBUG")
     SECRET_KEY = environ.get("SECRET_KEY")
 
@@ -25,3 +25,19 @@ class Config:
     # Static Assets
     STATIC_FOLDER = "static"
     TEMPLATE_FOLDER = "templates"
+
+    # MIDL public infrastructures
+    MIDL_CLUSTER_INFO = [
+        {
+            "name": "MIDL.dev Toronto",
+            "probe_url": environ.get("MIDL_TOR_URL"),
+            "cluster_labels": environ.get("MIDL_TOR_CLUSTER_LABELS"),
+        },
+        {
+            "name": "MIDL.dev Amsterdam",
+            "probe_url": environ.get("MIDL_AMS_URL"),
+            "cluster_labels": environ.get("MIDL_AMS_CLUSTER_LABELS"),
+        },
+    ]
+
+    MIDL_LOKI_URL = environ.get("MIDL_LOKI_URL")

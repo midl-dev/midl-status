@@ -91,5 +91,5 @@ def setup_periodic_tasks(sender, **kwargs):
         5.0, check_cluster_status, name="check cluster status task"
     )
     sender.add_periodic_task(
-        30.0, fetch_cluster_request_counts.s("30s"), name="check cluster status task"
+        30.0, fetch_cluster_request_counts.s("30s"), name="fetch cluster request counts"
     )

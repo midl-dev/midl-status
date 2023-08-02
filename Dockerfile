@@ -18,4 +18,3 @@ ENV \
     POETRY_HOME=/opt/poetry \
     STATIC_PATH=/app/app/static \
     FLASK_ENV=production
-EXPOSE 80

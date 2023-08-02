@@ -43,7 +43,7 @@ def check_cluster_status():
         cluster_status = ClusterStatus(cluster=cluster_name, time=datetime.now())
 
         if flask_app.config["ENV"] == "development":
-            cluster_status.status = 1
+            cluster_status.status = random.randint(0, 1)
         else:
             try:
                 probe_result = requests.get(cluster_probe_url, timeout=2.50)

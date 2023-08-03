@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 import requests
 from celery import Celery
+from celery.schedules import crontab
 from celery.utils.log import get_task_logger
 from loki_api_client.loki_connect import LokiConnect
 
@@ -85,7 +86,7 @@ def fetch_cluster_request_counts(time_range="30s"):
 
 
 @celery.task
-def cleanup_status_data(hours=168):
+def cleanup_status_data(hours=72):
     oldest_data = datetime.now() - timedelta(hours=hours)
     # clean up ClusterStatus
     ClusterStatus.query.filter(ClusterStatus.created_at < oldest_data).delete()
@@ -105,5 +106,7 @@ def setup_periodic_tasks(sender, **kwargs):
         60.0, fetch_cluster_request_counts.s("60s"), name="fetch cluster request counts"
     )
     sender.add_periodic_task(
-        10.0, cleanup_status_data, name="delete old midl status records"
+        crontab(minute="0", hour="0"),
+        cleanup_status_data,
+        name="delete old midl status records",
     )

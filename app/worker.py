@@ -86,7 +86,7 @@ def fetch_cluster_request_counts(time_range="30s"):
 
 @celery.task
 def cleanup_status_data(hours=168):
-    oldest_data = datetime.now() - timedelta(hours=24)
+    oldest_data = datetime.now() - timedelta(hours=hours)
     # clean up ClusterStatus
     ClusterStatus.query.filter(ClusterStatus.created_at < oldest_data).delete()
     # clean up RequestCount

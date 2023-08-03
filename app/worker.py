@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 from celery import Celery
@@ -58,7 +58,7 @@ def check_cluster_status():
 
 
 @celery.task
-def fetch_cluster_request_counts(time_range):
+def fetch_cluster_request_counts(time_range="30s"):
     for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
         cluster_name, cluster_labels = cluster["name"], cluster["cluster_labels"]
         cluster_requests = RequestCount(cluster=cluster_name, time=datetime.now())
@@ -84,12 +84,26 @@ def fetch_cluster_request_counts(time_range):
         db.session.commit()
 
 
+@celery.task
+def cleanup_status_data(hours=168):
+    oldest_data = datetime.now() - timedelta(hours=24)
+    # clean up ClusterStatus
+    ClusterStatus.query.filter(ClusterStatus.created_at < oldest_data).delete()
+    # clean up RequestCount
+    RequestCount.query.filter(RequestCount.created_at < oldest_data).delete()
+
+    db.session.commit()
+
+
 @celery.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     # Callscheck cluster status task every 10 seconds.
     sender.add_periodic_task(
-        5.0, check_cluster_status, name="check cluster status task"
+        30.0, check_cluster_status, name="check cluster status task"
     )
     sender.add_periodic_task(
-        30.0, fetch_cluster_request_counts.s("30s"), name="fetch cluster request counts"
+        60.0, fetch_cluster_request_counts.s("60s"), name="fetch cluster request counts"
+    )
+    sender.add_periodic_task(
+        10.0, cleanup_status_data, name="delete old midl status records"
     )

@@ -51,7 +51,8 @@ def check_cluster_status():
                 cluster_status.status = (
                     1 if 200 <= probe_result.status_code < 300 else 0
                 )
-            except requests.RequestException:
+            except requests.RequestException as e:
+                logger.exception(e)
                 cluster_status.status = 0
 
         db.session.add(cluster_status)
@@ -78,7 +79,8 @@ def fetch_cluster_request_counts(time_range="30s"):
                     else 0
                 )
                 cluster_requests.count = request_counts
-            except Exception:
+            except Exception as e:
+                logger.exception(e)
                 cluster_requests.count = 0
 
         db.session.add(cluster_requests)

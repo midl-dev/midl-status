@@ -299,7 +299,7 @@
               }
             ]
           },
-          "unit": "rpc requests"
+          "unit": "rpc requests/min"
         },
         "overrides": []
       },
@@ -427,7 +427,7 @@
               }
             ]
           },
-          "unit": "rpc requests"
+          "unit": "rpc requests/min"
         },
         "overrides": []
       },

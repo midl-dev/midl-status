@@ -38,7 +38,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +103,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
@@ -135,7 +135,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -200,7 +200,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
@@ -245,7 +245,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -329,7 +329,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
@@ -376,7 +376,7 @@
     {
       "datasource": {
         "type": "postgres",
-        "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+        "uid": "P44368ADAD746BC27"
       },
       "fieldConfig": {
         "defaults": {
@@ -454,7 +454,7 @@
         {
           "datasource": {
             "type": "postgres",
-            "uid": "c899b9a3-1f66-4ae1-a924-89762f7b5960"
+            "uid": "P44368ADAD746BC27"
           },
           "editorMode": "code",
           "format": "table",
@@ -492,13 +492,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "MIDL.dev status",
   "uid": "eb13c490-0749-4f6a-b8f8-e1824296affd",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }

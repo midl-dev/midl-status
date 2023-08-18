@@ -3,17 +3,19 @@ from datetime import datetime, timedelta
 
 import requests
 from celery import Celery
-from celery.schedules import crontab
+
+# from celery.schedules import crontab
 from celery.utils.log import get_task_logger
+from flask import Flask
 from loki_api_client.loki_connect import LokiConnect
 
-from app.main import create_app
+from app import create_app
 from app.models import ClusterStatus, RequestCount, db
 
 logger = get_task_logger(__name__)
 
 
-def create_celery(app):
+def create_celery(app: Flask) -> Celery:
     celery = Celery(
         app.import_name,
         backend=app.config["CELERY_RESULT_BACKEND"],
@@ -98,17 +100,17 @@ def cleanup_status_data(hours=72):
     db.session.commit()
 
 
-@celery.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    # Callscheck cluster status task every 10 seconds.
-    sender.add_periodic_task(
-        30.0, check_cluster_status, name="check cluster status task"
-    )
-    sender.add_periodic_task(
-        60.0, fetch_cluster_request_counts.s("60s"), name="fetch cluster request counts"
-    )
-    sender.add_periodic_task(
-        crontab(minute="0", hour="0"),
-        cleanup_status_data,
-        name="delete old midl status records",
-    )
+# @celery.on_after_configure.connect
+# def setup_periodic_tasks(sender, **kwargs):
+#     # Callscheck cluster status task every 10 seconds.
+#     sender.add_periodic_task(
+#         30.0, check_cluster_status, name="check cluster status task"
+#     )
+#     sender.add_periodic_task(
+#         60.0, fetch_cluster_request_counts.s("60s"), name="fetch cluster request counts"
+#     )
+#     sender.add_periodic_task(
+#         crontab(minute="0", hour="0"),
+#         cleanup_status_data,
+#         name="delete old midl status records",
+#     )

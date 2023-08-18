@@ -18,3 +18,5 @@ ENV \
     POETRY_HOME=/opt/poetry \
     STATIC_PATH=/app/app/static \
     FLASK_ENV=production
+
+CMD ["gunicorn", "-w", "4", "--bind", "0.0.0.0:5000", "wsgi"]

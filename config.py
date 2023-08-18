@@ -10,8 +10,6 @@ class Config:
     """Flask configuration variables."""
 
     # General Config
-    APP_NAME = environ.get("APP_NAME")
-    ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("FLASK_DEBUG")
     SECRET_KEY = environ.get("SECRET_KEY")
 
@@ -26,6 +24,9 @@ class Config:
     STATIC_FOLDER = "static"
     TEMPLATE_FOLDER = "templates"
 
+
+class ProductionConfig(Config):
+    ENV = "production"
     # MIDL public infrastructures
     MIDL_CLUSTER_INFO = [
         {
@@ -41,3 +42,31 @@ class Config:
     ]
 
     MIDL_LOKI_URL = environ.get("MIDL_LOKI_URL")
+
+
+class DevelopmentConfig(Config):
+    ENV = "development"
+    DEBUG = True
+    # MIDL public infrastructures
+    MIDL_CLUSTER_INFO = [
+        {
+            "name": "MIDL.dev Toronto",
+            "probe_url": None,
+            "cluster_labels": None,
+        },
+        {
+            "name": "MIDL.dev Amsterdam",
+            "probe_url": None,
+            "cluster_labels": None,
+        },
+    ]
+
+    MIDL_LOKI_URL = None
+
+
+class TestingConfig(Config):
+    ENV = "testing"
+    DEBUG = True
+    MIDL_CLUSTER_INFO = None
+    MIDL_LOKI_URL = None
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{path.join(BASE_DIR, 'instance', 'app.db')}"

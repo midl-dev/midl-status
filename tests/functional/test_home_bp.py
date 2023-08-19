@@ -9,7 +9,7 @@ def test_home_page(test_client):
 
     assert response.status_code == 200
     assert json.loads(response.data) == {
-        "status1": "running",
+        "status": "running",
     }
 
 

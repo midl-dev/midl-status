@@ -1,9 +1,9 @@
-name: pytest
+name: ci
 
 on: pull_request
 
 jobs:
-  test:
+  pytest:
     runs-on: ubuntu-latest
     steps:
       #----------------------------------------------
@@ -52,5 +52,8 @@ jobs:
           poetry run pytest -v --cov=app | tee pytest-coverage.txt
           set +o pipefail
 
+      #----------------------------------------------
+      #              Post coverage comment
+      #----------------------------------------------
       - name: Comment coverage
         uses: coroo/pytest-coverage-commentator@v1.0.2

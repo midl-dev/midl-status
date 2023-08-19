@@ -1,4 +1,4 @@
-name: test
+name: pytest
 
 on: pull_request
 
@@ -47,4 +47,7 @@ jobs:
       #              run test suite
       #----------------------------------------------
       - name: Run tests
-        run:  poetry run pytest -v --cov=app
+        run:  poetry run pytest -v --cov=app > pytest-coverage.txt
+
+      - name: Comment coverage
+        uses: coroo/pytest-coverage-commentator@v1.0.2

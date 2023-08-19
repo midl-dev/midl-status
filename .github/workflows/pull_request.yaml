@@ -47,7 +47,10 @@ jobs:
       #              run test suite
       #----------------------------------------------
       - name: Run tests
-        run:  poetry run pytest -v --cov=app | tee pytest-coverage.txt
+        run:  |
+          set -o pipefail
+          poetry run pytest -v --cov=app | tee pytest-coverage.txt
+          set +o pipefail
 
       - name: Comment coverage
         uses: coroo/pytest-coverage-commentator@v1.0.2

@@ -24,14 +24,14 @@ def create_celery(app: Flask) -> Celery:
     celery.conf.update(app.config)
     TaskBase = celery.Task
 
-    class ContextTask(TaskBase):
+    class ContextTask(TaskBase):  # type: ignore
         abstract = True
 
-        def __call__(self, *args, **kwargs):
+        def __call__(self, *args, **kwargs):  # type: ignore
             with app.app_context():
                 return TaskBase.__call__(self, *args, **kwargs)
 
-    celery.Task = ContextTask
+    celery.Task = ContextTask  # type: ignore
     return celery
 
 

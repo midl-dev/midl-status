@@ -1,8 +1,9 @@
-import enum
 from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+
 
 class RequestCount(db.Model):
     __tablename__ = "request_counts"

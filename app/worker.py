@@ -40,7 +40,7 @@ celery = create_celery(flask_app)
 
 
 @celery.task
-def check_cluster_status():
+def check_cluster_status() -> None:
     for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
         cluster_name, cluster_probe_url = cluster["name"], cluster["probe_url"]
         cluster_status = ClusterStatus(cluster=cluster_name, time=datetime.now())
@@ -62,7 +62,7 @@ def check_cluster_status():
 
 
 @celery.task
-def fetch_cluster_request_counts(time_range="30s"):
+def fetch_cluster_request_counts(time_range: str = "30s") -> None:
     for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
         cluster_name, cluster_labels = cluster["name"], cluster["cluster_labels"]
         cluster_requests = RequestCount(cluster=cluster_name, time=datetime.now())
@@ -90,7 +90,7 @@ def fetch_cluster_request_counts(time_range="30s"):
 
 
 @celery.task
-def cleanup_status_data(hours=72):
+def cleanup_status_data(hours: int = 72) -> None:
     oldest_data = datetime.now() - timedelta(hours=hours)
     # clean up ClusterStatus
     ClusterStatus.query.filter(ClusterStatus.created_at < oldest_data).delete()

@@ -3,8 +3,10 @@ This file (test_home_bp.py) contains the functional tests for the `home` bluepri
 """
 import json
 
+from flask.testing import FlaskClient
 
-def test_home_page(test_client):
+
+def test_home_page(test_client: FlaskClient) -> None:
     response = test_client.get("/")
 
     assert response.status_code == 200
@@ -13,7 +15,7 @@ def test_home_page(test_client):
     }
 
 
-def test_home_config_page(test_client):
+def test_home_config_page(test_client: FlaskClient) -> None:
     response = test_client.get("/config")
     response_data = json.loads(response.data)
 

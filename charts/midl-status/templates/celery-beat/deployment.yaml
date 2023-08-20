@@ -1,0 +1,64 @@
+{{- if .Values.celeryBeat.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-celery-beat
+  labels:
+    {{- include "midl-status.labels" . | nindent 4 }}
+    app.kubernetes.io/component: celery-beat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "midl-status.labels" . | nindent 6 }}
+      app.kubernetes.io/component: celery-beat
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "midl-status.labels" . | nindent 8 }}
+        app.kubernetes.io/component: celery-beat
+      annotations:
+        checksum/config: {{include (print $.Template.BasePath "/flask-core/configmap.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.celeryBeat.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.celeryBeat.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.celeryBeat.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.celeryBeat.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{.Release.Name}}-config
+            - secretRef:
+                name: {{.Release.Name}}-secret
+          resources:
+            {{- toYaml .Values.celeryBeat.resources | nindent 12 }}
+      {{- with .Values.celeryBeat.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.celeryBeat.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.celeryBeat.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end -}}

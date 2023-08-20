@@ -3,7 +3,7 @@ import datetime
 from app.models import ClusterStatus, RequestCount
 
 
-def test_create_request_count():
+def test_create_request_count() -> None:
     request_count = RequestCount(
         count=1000, cluster="test_cluster", time=datetime.datetime.now()
     )
@@ -11,7 +11,7 @@ def test_create_request_count():
     assert request_count.cluster == "test_cluster"
 
 
-def test_create_cluster_status():
+def test_create_cluster_status() -> None:
     cluster_status = ClusterStatus(
         cluster="test_cluster", status=1, time=datetime.datetime.now()
     )

@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 
 import pytest
 
@@ -6,7 +7,7 @@ from app import create_app
 
 
 @pytest.fixture(scope="module")
-def test_client():
+def test_client() -> Generator:
     # Set the Testing configuration prior to creating the Flask application
     os.environ["CONFIG_TYPE"] = "config.TestingConfig"
     flask_app = create_app()

@@ -1,10 +1,11 @@
-import enum
 from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class RequestCount(db.Model):
+
+class RequestCount(db.Model):  # type: ignore
     __tablename__ = "request_counts"
 
     count = db.Column(db.Integer, nullable=False)
@@ -13,7 +14,7 @@ class RequestCount(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
 
 
-class ClusterStatus(db.Model):
+class ClusterStatus(db.Model):  # type: ignore
     __tablename__ = "cluster_status"
 
     cluster = db.Column(db.String(100), primary_key=True)

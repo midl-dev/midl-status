@@ -5,6 +5,8 @@ Dockerfile
 .dockerignore
 .idea/
 .git/
+.github
+.pre-commit-config.yaml
 venv/
 *.pyc
 __pycache__/
@@ -17,3 +19,9 @@ build/
 *.egg-info/
 celerybeat-schedule
 tests/
+charts/
+dashbord/
+app.png
+README.md
+.mypy_cache
+mypy.ini

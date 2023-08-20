@@ -1,0 +1,38 @@
+{{- if .Values.migrateJob.enabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{.Release.Name}}-status-server-migrate
+  labels:
+    {{- include "midl-status.labels" . | nindent 4 }}
+    app.kubernetes.io/component: migrate-job
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "10"
+spec:
+  template:
+    #    ttlSecondsAfterFinished: 60
+    spec:
+      {{- with .Values.image.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.statusServer.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.statusServer.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash"]
+          args: ["-c", "flask db upgrade"]
+          envFrom:
+            - configMapRef:
+                name: {{.Release.Name}}-config
+            - secretRef:
+                name: {{.Release.Name}}-secret
+      restartPolicy: Never
+  backoffLimit: 0
+  {{- end -}}

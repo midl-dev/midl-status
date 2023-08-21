@@ -1,5 +1,6 @@
 from os import environ, path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 BASE_DIR = path.abspath(path.dirname(__file__))
@@ -43,6 +44,22 @@ class ProductionConfig(Config):
     ]
 
     MIDL_LOKI_URL = environ.get("MIDL_LOKI_URL")
+
+    CELERY_BEAT_SCHEDULE = {
+        "check-cluster-status": {
+            "task": "app.celery.check_cluster_status",
+            "schedule": 30.0,
+        },
+        "fetch-cluster-request-counts": {
+            "task": "app.celery.fetch_cluster_request_counts",
+            "schedule": 60.0,
+            "args": ("60s",),
+        },
+        "cleanup-status-data": {
+            "task": "app.celery.cleanup_status_data",
+            "schedule": crontab(minute="0", hour="0"),
+        },
+    }
 
 
 class DevelopmentConfig(Config):

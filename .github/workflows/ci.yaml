@@ -1,6 +1,10 @@
 name: ci
 
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   pytest:
@@ -104,3 +108,32 @@ jobs:
       - name: Run mypy
         run:  |
           poetry run mypy
+
+  publish_containers:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Login to registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Docker meta
+      id: meta
+      uses: docker/metadata-action@v3
+      with:
+        images: ghcr.io/${{ github.repository_owner }}/midl-status
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=match,pattern=v(.*),group=1
+
+    - name: Push to GHCR
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}

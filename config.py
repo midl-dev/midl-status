@@ -19,6 +19,7 @@ class Config:
     # Celery
     CELERY_BROKER_URL = environ.get("CELERY_BROKER_URL")
     CELERY_RESULT_BACKEND = environ.get("CELERY_RESULT_BACKEND")
+    CELERY_BEAT_SCHEDULE = {}
 
     # Static Assets
     STATIC_FOLDER = "static"
@@ -62,6 +63,22 @@ class DevelopmentConfig(Config):
     ]
 
     MIDL_LOKI_URL = None
+
+    CELERY_BEAT_SCHEDULE = {
+        "check-cluster-status": {
+            "task": "app.celery.check_cluster_status",
+            "schedule": 30.0,
+        },
+        "fetch-cluster-request-counts": {
+            "task": "app.celery.fetch_cluster_request_counts",
+            "schedule": 60.0,
+            "args": ("60s",),
+        },
+        "cleanup-status-data": {
+            "task": "app.celery.cleanup_status_data",
+            "schedule": 60.0,
+        },
+    }
 
 
 class TestingConfig(Config):

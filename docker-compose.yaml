@@ -54,14 +54,14 @@ services:
       - app
     container_name: midl-status-celeryworker
     ports: []
-    command: bash -c "celery -A app.worker:celery worker --loglevel=INFO"
+    command: bash -c "celery -A app.celery:celery worker --loglevel=INFO"
   app-celerybeat:
     <<: *status_app
     depends_on:
       - app
     container_name: midl-status-celerybeat
     ports: []
-    command: bash -c "celery -A app.worker:celery beat --loglevel=INFO"
+    command: bash -c "celery -A app.celery:celery beat --loglevel=INFO"
   grafana:
     image: grafana/grafana:latest
     restart: "no"

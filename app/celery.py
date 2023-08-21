@@ -20,6 +20,7 @@ def create_celery(app: Flask) -> Celery:
         app.import_name,
         backend=app.config["CELERY_RESULT_BACKEND"],
         broker=app.config["CELERY_BROKER_URL"],
+        beat_schedule=app.config["CELERY_BEAT_SCHEDULE"],
     )
     celery.conf.update(app.config)
     TaskBase = celery.Task
@@ -98,19 +99,3 @@ def cleanup_status_data(hours: int = 72) -> None:
     RequestCount.query.filter(RequestCount.created_at < oldest_data).delete()
 
     db.session.commit()
-
-
-# @celery.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     # Callscheck cluster status task every 10 seconds.
-#     sender.add_periodic_task(
-#         30.0, check_cluster_status, name="check cluster status task"
-#     )
-#     sender.add_periodic_task(
-#         60.0, fetch_cluster_request_counts.s("60s"), name="fetch cluster request counts"
-#     )
-#     sender.add_periodic_task(
-#         crontab(minute="0", hour="0"),
-#         cleanup_status_data,
-#         name="delete old midl status records",
-#     )

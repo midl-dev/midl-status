@@ -46,9 +46,7 @@ def check_cluster_status() -> None:
         cluster_name, cluster_probe_url = cluster["name"], cluster["probe_url"]
         cluster_status = ClusterStatus(cluster=cluster_name, time=datetime.now())
 
-        if flask_app.config["ENV"] == "development":
-            cluster_status.status = random.randint(0, 1)
-        else:
+        if flask_app.config["ENV"] == "production":
             try:
                 probe_result = requests.get(cluster_probe_url, timeout=2.50)
                 cluster_status.status = (
@@ -57,20 +55,24 @@ def check_cluster_status() -> None:
             except requests.RequestException as e:
                 logger.exception(e)
                 cluster_status.status = 0
+        else:
+            cluster_status.status = random.randint(0, 1)
 
         db.session.add(cluster_status)
         db.session.commit()
 
 
 @celery.task
-def fetch_cluster_request_counts(time_range: str = "30s") -> None:
+def fetch_cluster_request_counts(
+    time_range: str = "30s", request_type: str = "general"
+) -> None:
     for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
         cluster_name, cluster_labels = cluster["name"], cluster["cluster_labels"]
-        cluster_requests = RequestCount(cluster=cluster_name, time=datetime.now())
+        cluster_requests = RequestCount(
+            cluster=cluster_name, type=request_type, time=datetime.now()
+        )
 
-        if flask_app.config["ENV"] == "development":
-            cluster_requests.count = random.randint(5000, 15000)
-        else:
+        if flask_app.config["ENV"] == "production":
             loki_url = flask_app.config["MIDL_LOKI_URL"]
             loki_connect = LokiConnect(url=loki_url)
             loki_query = f"sum(count_over_time({{{cluster_labels}}}[{time_range}]))"
@@ -85,6 +87,8 @@ def fetch_cluster_request_counts(time_range: str = "30s") -> None:
             except Exception as e:
                 logger.exception(e)
                 cluster_requests.count = 0
+        else:
+            cluster_requests.count = random.randint(5000, 15000)
 
         db.session.add(cluster_requests)
         db.session.commit()

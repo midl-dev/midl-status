@@ -55,6 +55,11 @@ class ProductionConfig(Config):
             "schedule": 60.0,
             "args": ("60s",),
         },
+        "fetch-cluster-injected-ops": {
+            "task": "app.celery.fetch_cluster_request_counts",
+            "schedule": 60.0,
+            "args": ("60s", "injected_ops"),
+        },
         "cleanup-status-data": {
             "task": "app.celery.cleanup_status_data",
             "schedule": crontab(minute="0", hour="0"),
@@ -90,6 +95,11 @@ class DevelopmentConfig(Config):
             "task": "app.celery.fetch_cluster_request_counts",
             "schedule": 60.0,
             "args": ("60s",),
+        },
+        "fetch-cluster-injected-ops": {
+            "task": "app.celery.fetch_cluster_request_counts",
+            "schedule": 60.0,
+            "args": ("60s", "injected_ops"),
         },
         "cleanup-status-data": {
             "task": "app.celery.cleanup_status_data",

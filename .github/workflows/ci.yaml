@@ -175,9 +175,9 @@ jobs:
 
             RELEASE_VERSION=${{ steps.get_release_version.outputs.RELEASE_VERSION }}
 
-            yq e ".version = \"$RELEASE_VERSION\"" -i "$chart/Chart.yaml"
+            yq e ".version = \"$RELEASE_VERSION\"" -i "charts/midl-status/Chart.yaml"
 
-            yq e ".image.tag = \"$RELEASE_VERSION\"" -i "$chart/values.yaml"
+            yq e ".image.tag = \"$RELEASE_VERSION\"" -i "charts/midl-status/values.yaml"
 
         - name: Publish Helm charts
           uses: stefanprodan/helm-gh-pages@master

@@ -35,11 +35,13 @@ class ProductionConfig(Config):
             "name": "MIDL.dev Toronto",
             "probe_url": environ.get("MIDL_TOR_URL"),
             "cluster_labels": environ.get("MIDL_TOR_CLUSTER_LABELS"),
+            "injected_op_labels": environ.get("MIDL_TOR_INJECTED_OPS_LABELS"),
         },
         {
             "name": "MIDL.dev Amsterdam",
             "probe_url": environ.get("MIDL_AMS_URL"),
             "cluster_labels": environ.get("MIDL_AMS_CLUSTER_LABELS"),
+            "injected_op_labels": environ.get("MIDL_AMS_INJECTED_OPS_LABELS"),
         },
     ]
 
@@ -76,11 +78,13 @@ class DevelopmentConfig(Config):
             "name": "MIDL.dev Toronto",
             "probe_url": None,
             "cluster_labels": None,
+            "injected_op_labels": None,
         },
         {
             "name": "MIDL.dev Amsterdam",
             "probe_url": None,
             "cluster_labels": None,
+            "injected_op_labels": None,
         },
     ]
 

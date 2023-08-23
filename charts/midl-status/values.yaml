@@ -1,14 +1,14 @@
 image:
   # image config
-  repository: midl/midl-status
-  tag: latest
+  repository: ghcr.io/midl-dev/midl-status
+  tag: main
   pullPolicy: Always
   imagePullSecrets: []
 
 configmap:
   data:
-    FLASK_DEBUG: "True"
-    FLASK_ENV: "development"
+    FLASK_DEBUG: "False"
+    FLASK_ENV: "production"
     FLASK_RUN_HOST: '0.0.0.0'
     FLASK_RUN_PORT: '5000'
 

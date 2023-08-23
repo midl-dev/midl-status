@@ -66,8 +66,16 @@ def check_cluster_status() -> None:
 def fetch_cluster_request_counts(
     time_range: str = "30s", request_type: str = "general"
 ) -> None:
+    # maps request type to in config
+    cluster_label_map = {
+        "general": "cluster_labels",
+        "injected_ops": "injected_op_labels",
+    }
     for cluster in flask_app.config["MIDL_CLUSTER_INFO"]:
-        cluster_name, cluster_labels = cluster["name"], cluster["cluster_labels"]
+        cluster_name, cluster_labels = (
+            cluster["name"],
+            cluster[cluster_label_map[request_type]],
+        )
         cluster_requests = RequestCount(
             cluster=cluster_name, type=request_type, time=datetime.now()
         )

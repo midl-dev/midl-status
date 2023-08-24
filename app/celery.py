@@ -83,7 +83,7 @@ def fetch_cluster_request_counts(
         if flask_app.config["ENV"] == "production":
             loki_url = flask_app.config["MIDL_LOKI_URL"]
             loki_connect = LokiConnect(url=loki_url)
-            loki_query = f"sum(count_over_time({{{cluster_labels}}}[{time_range}]))"
+            loki_query = f"sum(count_over_time({cluster_labels} [{time_range}]))"
             try:
                 loki_resp = loki_connect.query(query=loki_query)
                 request_counts = (

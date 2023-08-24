@@ -11,7 +11,6 @@ class Config:
     """Flask configuration variables."""
 
     # General Config
-    DEBUG = environ.get("FLASK_DEBUG")
     SECRET_KEY = environ.get("SECRET_KEY")
 
     # SQLAlchemy
@@ -28,6 +27,7 @@ class Config:
 
 
 class ProductionConfig(Config):
+    DEBUG = False
     ENV = "production"
     # MIDL public infrastructures
     MIDL_CLUSTER_INFO = [

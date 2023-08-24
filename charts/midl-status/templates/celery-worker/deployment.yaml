@@ -5,13 +5,13 @@ kind: Deployment
 metadata:
   name: {{$.Release.Name}}-celery-work-{{.name}}
   labels:
-    {{- include "midl-status.labels" $ | nindent 4 }}
+    {{- include "midl-status.selectorLabels" $ | nindent 4 }}
     app.kubernetes.io/component: {{$.Release.Name}}-celery-work-{{.name}}
 spec:
   replicas: {{ .replicaCount }}
   selector:
     matchLabels:
-      {{- include "midl-status.labels" $ | nindent 6 }}
+      {{- include "midl-status.selectorLabels" $ | nindent 6 }}
       app.kubernetes.io/component: {{$.Release.Name}}-celery-work-{{.name}}
   strategy:
     rollingUpdate:
@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "midl-status.labels" $ | nindent 8 }}
+        {{- include "midl-status.selectorLabels" $ | nindent 8 }}
         app.kubernetes.io/component: {{$.Release.Name}}-celery-work-{{.name}}
       annotations:
         checksum/config: {{include (print $.Template.BasePath "/flask-core/configmap.yaml") $ | sha256sum }}

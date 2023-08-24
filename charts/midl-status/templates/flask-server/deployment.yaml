@@ -3,13 +3,13 @@ kind: Deployment
 metadata:
   name: {{.Release.Name}}-status-server
   labels:
-    {{- include "midl-status.labels" . | nindent 4 }}
+    {{- include "midl-status.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: status-server
 spec:
   replicas: {{ .Values.statusServer.replicaCount }}
   selector:
     matchLabels:
-      {{- include "midl-status.labels" . | nindent 6 }}
+      {{- include "midl-status.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: status-server
   strategy:
     rollingUpdate:
@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "midl-status.labels" . | nindent 8 }}
+        {{- include "midl-status.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: status-server
       annotations:
         checksum/config: {{include (print $.Template.BasePath "/flask-core/configmap.yaml") . | sha256sum }}

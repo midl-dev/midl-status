@@ -4,7 +4,7 @@ kind: Job
 metadata:
   name: {{.Release.Name}}-status-server-migrate
   labels:
-    {{- include "midl-status.labels" . | nindent 4 }}
+    {{- include "midl-status.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: migrate-job
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade

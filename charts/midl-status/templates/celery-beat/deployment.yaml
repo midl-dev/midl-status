@@ -4,20 +4,20 @@ kind: Deployment
 metadata:
   name: {{.Release.Name}}-celery-beat
   labels:
-    {{- include "midl-status.labels" . | nindent 4 }}
+    {{- include "midl-status.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: celery-beat
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "midl-status.labels" . | nindent 6 }}
+      {{- include "midl-status.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: celery-beat
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        {{- include "midl-status.labels" . | nindent 8 }}
+        {{- include "midl-status.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: celery-beat
       annotations:
         checksum/config: {{include (print $.Template.BasePath "/flask-core/configmap.yaml") . | sha256sum }}

@@ -61,7 +61,7 @@ celeryBeat:
   enabled: true
 
   command: ["/bin/bash"]
-  args: ["-c", "celery -A app.worker:celery beat --loglevel=INFO"]
+  args: ["-c", "celery -A app.celery:celery beat --loglevel=INFO"]
 
   podSecurityContext: {}
 
@@ -82,7 +82,7 @@ celeryWorker:
     - name: celery
       replicaCount: 1
       command: ["/bin/bash"]
-      args: ["-c", "celery -A app.worker:celery worker --loglevel=INFO"]
+      args: ["-c", "celery -A app.celery:celery worker --loglevel=INFO"]
       podSecurityContext: {}
       securityContext: {}
       resources: {}

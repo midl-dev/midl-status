@@ -3,6 +3,16 @@ entries:
   midl-status:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2023-08-25T12:08:59.341491429Z"
+    description: A Helm chart for Kubernetes
+    digest: 4fe7f19528e7987764e2ef014f01627fdc443783c33d3c0ae18cd93f83e4764b
+    name: midl-status
+    type: application
+    urls:
+    - https://midl-dev.github.io/midl-status/midl-status-v0.0.4.tgz
+    version: v0.0.4
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2023-08-24T15:24:01.986575138Z"
     description: A Helm chart for Kubernetes
     digest: c2c01b2c2a705ae953e946a168ab8aeab1d28ac28f63ceb40eb308522a52ef1d
@@ -31,4 +41,4 @@ entries:
     urls:
     - https://midl-dev.github.io/midl-status/midl-status-v0.0.1.tgz
     version: v0.0.1
-generated: "2023-08-24T15:24:01.985042309Z"
+generated: "2023-08-25T12:08:59.340522469Z"
